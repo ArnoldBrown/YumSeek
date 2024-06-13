@@ -1,8 +1,9 @@
 const COLORS = {
-    primary: '#fc4e03',
+    // primary: '#fc4e03',
+    primary: '#fcba03',
     secondary: '#FFA07A',
     background: '#ffffff',
-    primary_two: '#fae8e1',
+    primary_two: '#faeabe',
   
     white: '#ffffff',
     black: '#000000',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import COLORS from '../constants/colors';
 
 interface CommonInputProps extends TextInputProps {
   type: 'email' | 'password' | 'default';
@@ -32,6 +33,7 @@ const CommonInput: React.FC<CommonInputProps> = ({ type, ...restProps }) => {
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         placeholder={placeholder}
+        placeholderTextColor={COLORS.text_lite}
         {...restProps} // Pass through any additional props
       />
     </View>
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 8,
     paddingHorizontal: 10,
+    color:COLORS.text
   },
 });
 

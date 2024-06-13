@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 12,
       fontWeight: 'bold',
+      color:COLORS.text
     },
     titleApp: {
         fontSize: 15,
@@ -59,7 +60,8 @@ const styles = StyleSheet.create({
     country: {
       marginLeft: -2,
       textAlign:'center',
-      fontSize:12
+      fontSize:12,
+      color:COLORS.text
     },
     icon: {
       paddingHorizontal: 1,

@@ -91,7 +91,7 @@ const DetailsScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flex: 1, alignItems: 'center', position: 'relative', zIndex: 99 }}>
+                <View style={{ flex: 1, alignItems: 'center', position: 'relative', zIndex: 99, marginTop:screenHeight/20 }}>
                     <Image source={{ uri: foodDetail?.strMealThumb }} style={styles.image} />
                 </View>
                 </ImageBackground>
@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     image: {
-        width: 200,
-        height: 200,
+        width: screenWidth/2,
+        height: screenHeight/4,
         marginBottom: 10,
         borderRadius: 200,
         resizeMode: 'cover'
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     detail: {
         fontSize: 14,
         marginBottom: 5,
+        color:COLORS.text
     },
     foodTitle: {
         fontSize: 20,

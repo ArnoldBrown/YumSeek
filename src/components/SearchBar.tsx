@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, NativeSyntheticEvent, TextInputSubmitEditingEventData } from 'react-native';
 import SearchIcon from './SearchIcon';
+import COLORS from '../constants/colors';
 
 interface SearchBarProps {
   onSearch: (searchText: string) => void;
@@ -32,6 +33,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onClear }) => {
         placeholder="Search your favourite food"
         returnKeyType="search"
         onSubmitEditing={handleSearch}
+        placeholderTextColor={COLORS.text_lite}
       />
       <SearchIcon
         isClearIcon={searchText.length > 0}
@@ -56,6 +58,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 16,
+    color:COLORS.text
   },
 });
 

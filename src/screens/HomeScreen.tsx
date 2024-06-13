@@ -100,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ marginLeft: 30, fontWeight: '700' }}>$12.50</Text>
+          <Text style={{ marginLeft: 30, fontWeight: '700', color:COLORS.text }}>$12.50</Text>
           <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
             <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
           </View>
@@ -115,8 +115,8 @@ const HomeScreen = ({ navigation }) => {
       <Header title="Your Screen Title" />
 
       <View style={{ margin: 10 }}>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite }}>Find The <Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Best</Text></Text>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite }}><Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Food</Text> Around You</Text>
+        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing:1 }}>Find The <Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Best</Text></Text>
+        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing:1 }}><Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Food</Text> Around You</Text>
 
         <SearchBar onSearch={handleSearch} onClear={handleClear}/>
 
