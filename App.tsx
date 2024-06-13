@@ -1,118 +1,96 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import HomeScreen from './src/screens/HomeScreen';
+import SearchScreen from './src/screens/SearchScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import DetailsScreen from './src/screens/DetailsScreen';
+import store from './src/store';
+import COLORS from './src/constants/colors';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const Tab = createBottomTabNavigator();
+const RootStack = createStackNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const TabNavigator = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ color, size }) => {
+        let iconName;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+        if (route.name === 'Home') {
+          iconName = 'home';
+        } else if (route.name === 'Search') {
+          iconName = 'magnify';
+        } else if (route.name === 'Profile') {
+          iconName = 'account';
+        }
+
+        return <Icon name={iconName} color={color} size={size} />;
+      },
+      tabBarLabel: () => null, // Hide the title in the tab bar
+      tabBarActiveTintColor: COLORS.active, // Active icon color
+      tabBarInactiveTintColor: 'gray', // Inactive icon color
+      tabBarStyle: {
+        position: 'absolute',
+        bottom: 10,
+        left: '2%',
+        right: '2%',
+        height: 50,
+        borderRadius: 30,
+        backgroundColor: COLORS.primary, // Background color of the tab bar
+        borderTopWidth: 0,
+        shadowColor: COLORS.text,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+        elevation: 5,
+      },
+    })}
+  >
+    <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+    <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+  </Tab.Navigator>
+);
+
+const App = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <Provider store={store}>
+      <PaperProvider>
+
+        <KeyboardAvoidingView style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Adjust this offset as needed
+        >
+          <NavigationContainer>
+            <RootStack.Navigator>
+              <RootStack.Screen
+                name="Main"
+                component={TabNavigator}
+                options={{ headerShown: false }}
+              />
+              <RootStack.Screen
+                name="Details"
+                component={DetailsScreen}
+                options={({ route }) => ({
+                  title: route.params?.food?.strMeal,
+                  headerShown: false
+                })}
+              />
+            </RootStack.Navigator>
+          </NavigationContainer>
+        </KeyboardAvoidingView>
+
+
+      </PaperProvider>
+    </Provider>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
