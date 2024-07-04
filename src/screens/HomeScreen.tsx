@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar } from 'react-native';
 import Header from '../components/Header';
 import { getFoodCategory, getRandomFood, getFoodByCategory, getFoodByQuery } from '../network/apiService';
@@ -6,10 +7,19 @@ import COLORS from '../constants/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SearchBar from '../components/SearchBar';
 import { ScrollView } from 'react-native-gesture-handler';
+import { RootState } from '../store';
+import { getCategories } from '../store/slices/categorySlice';
+import { getMealsByCategory } from '../store/slices/cateMealsSlice';
+
+
 
 const HomeScreen = ({ navigation }) => {
 
-  // const [randomFood, setRandomFood] = useState<any>(null);
+  const dispatch = useDispatch();
+  const { categories, loading, error } = useSelector((state: RootState) => state.categories);
+  const { meals, loadingM, errorM } = useSelector((state: RootState) => state.meals);
+
+
   const [category, setCategory] = useState<any>(null);
   const [selectCat, setSelectCat] = useState(null);
   const [categoryFood, setCategoryFood] = useState<any>(null);
@@ -27,58 +37,64 @@ const HomeScreen = ({ navigation }) => {
   const simulateSearchCall = async (query: string) => {
     try {
       const searchedFood = await getFoodByQuery(query);
-      console.log("kdkdkdk", searchResults)
       setSearchResults(searchedFood);
-      // setCategory(category);
-      // setSelectCat(category[0].strCategory);
     } catch (error) {
-      // Handle errors
       console.error('Error fetching random food:', error);
     }
   };
 
-  useEffect(() => {
-    // getRandomFoodCall();
-    getFoodCategoryCall();
-  }, [])
+  function getRandomValue(min: number = 10.00, max: number = 99.99): number {
+    const randomValue = Math.random() * (max - min) + min;
+    return parseFloat(randomValue.toFixed(2));
+  }
+  
 
-  useEffect(() => {
-    if (selectCat !== null) {
-      getFoodByCategoryCall(selectCat);
-    }
-  }, [selectCat])
+  // useEffect(() => {
+  //   getFoodCategoryCall();
+  // }, [])
 
-  //*API_CALL*//
-  // const getRandomFoodCall = async () => {
+  // const getFoodCategoryCall = async () => {
   //   try {
-  //     const meal = await getRandomFood();
-  //     setRandomFood(meal);
+  //     const category = await getFoodCategory();
+  //     setCategory(category);
+  //     setSelectCat(category[0].strCategory);
   //   } catch (error) {
   //     // Handle errors
   //     console.error('Error fetching random food:', error);
   //   }
   // };
 
-  const getFoodCategoryCall = async () => {
-    try {
-      const category = await getFoodCategory();
-      setCategory(category);
-      setSelectCat(category[0].strCategory);
-    } catch (error) {
-      // Handle errors
-      console.error('Error fetching random food:', error);
-    }
-  };
+  useEffect(() => {
+    dispatch(getCategories());
+  }, [dispatch]);
 
-  const getFoodByCategoryCall = async (category) => {
-    try {
-      const categoryFood = await getFoodByCategory(category);
-      setCategoryFood(categoryFood);
-    } catch (error) {
-      // Handle errors
-      console.error('Error fetching random food:', error);
+  useEffect(() => {
+    if (categories.length > 0) {
+      setSelectCat(categories[0].strCategory);
     }
-  };
+  }, [categories])
+
+  // useEffect(() => {
+  //   if (selectCat !== null) {
+  //     getFoodByCategoryCall(selectCat);
+  //   }
+  // }, [selectCat])
+
+  useEffect(() => {
+    if (selectCat) {
+      dispatch(getMealsByCategory(selectCat));
+    }
+  }, [dispatch, selectCat]);
+
+  // const getFoodByCategoryCall = async (category) => {
+  //   try {
+  //     const categoryFood = await getFoodByCategory(category);
+  //     setCategoryFood(categoryFood);
+  //   } catch (error) {
+  //     // Handle errors
+  //     console.error('Error fetching random food:', error);
+  //   }
+  // };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={{ marginLeft: -5 }} onPress={() => setSelectCat(item.strCategory)}>
@@ -100,7 +116,7 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ marginLeft: 30, fontWeight: '700', color:COLORS.text }}>$12.50</Text>
+          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {getRandomValue()}</Text>
           <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
             <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
           </View>
@@ -115,15 +131,13 @@ const HomeScreen = ({ navigation }) => {
       <Header title="Your Screen Title" />
 
       <View style={{ margin: 10 }}>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing:1 }}>Find The <Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Best</Text></Text>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing:1 }}><Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing:3 }}>Food</Text> Around You</Text>
+        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing: 1 }}>Find The <Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing: 3 }}>Best</Text></Text>
+        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing: 1 }}><Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing: 3 }}>Food</Text> Around You</Text>
 
-        <SearchBar onSearch={handleSearch} onClear={handleClear}/>
-
+        <SearchBar onSearch={handleSearch} onClear={handleClear} />
       </View>
 
       <ScrollView>
-
         <View>
           {searchResults?.length > 0 &&
             <View>
@@ -141,11 +155,11 @@ const HomeScreen = ({ navigation }) => {
             </View>
           }
 
-          {category?.length>0 &&
+          {categories?.length > 0 &&
             <View>
               <Text style={{ margin: 10, fontWeight: 'bold', fontSize: 12, letterSpacing: 2, color: COLORS.black }}>Find Food</Text>
               <FlatList
-                data={category}
+                data={categories}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item) => item.strCategory}
@@ -155,9 +169,9 @@ const HomeScreen = ({ navigation }) => {
             </View>
           }
 
-          {categoryFood &&
+          {meals &&
             <FlatList
-              data={categoryFood}
+              data={meals}
               renderItem={renderFoodItem}
               showsVerticalScrollIndicator={false}
               keyExtractor={(item) => item.idMeal}
@@ -167,10 +181,7 @@ const HomeScreen = ({ navigation }) => {
             />
           }
         </View>
-
       </ScrollView>
-
-
 
     </View>
   );
@@ -215,16 +226,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: COLORS.black
-  },
-  stickyHeaderText: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    fontWeight: 'bold',
-    fontSize: 16,
-    backgroundColor: '#fff',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
   },
 });
 

@@ -14,6 +14,7 @@ import store from './src/store';
 import COLORS from './src/constants/colors';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 
+
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
