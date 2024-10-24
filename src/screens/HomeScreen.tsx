@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, StatusBar, ToastAndroid, Alert, ActivityIndicator } from 'react-native';
 import Header from '../components/Header';
 import { getFoodCategory, getRandomFood, getFoodByCategory, getFoodByQuery } from '../network/apiService';
 import COLORS from '../constants/colors';
@@ -10,25 +10,35 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { RootState } from '../store';
 import { getCategories } from '../store/slices/categorySlice';
 import { getMealsByCategory } from '../store/slices/cateMealsSlice';
+import { AppDispatch } from '../store';
+import { addToCart, updateCartItemQuantity } from '../store/slices/cartSlice';
 
 
+const HomeScreen = () => {
 
-const HomeScreen = ({ navigation }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const dispatch = useDispatch();
   const { categories, loading, error } = useSelector((state: RootState) => state.categories);
   const { meals, loadingM, errorM } = useSelector((state: RootState) => state.meals);
-
+  console.log("dvdsvds", meals)
 
   const [category, setCategory] = useState<any>(null);
   const [selectCat, setSelectCat] = useState(null);
   const [categoryFood, setCategoryFood] = useState<any>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const lastSearchTextRef = useRef<string | null>(null);
 
-  const handleSearch = (searchText: string) => {
+
+
+  const handleSearch = useCallback((searchText: string) => {
     // Simulate a search operation
-    simulateSearchCall(searchText);
-  };
+    if (lastSearchTextRef.current !== searchText) {
+      simulateSearchCall(searchText);
+      lastSearchTextRef.current = searchText;
+    }
+  }, []); // No dependencies, so it will only be created once
+
 
   const handleClear = () => {
     setSearchResults([]);
@@ -37,48 +47,26 @@ const HomeScreen = ({ navigation }) => {
   const simulateSearchCall = async (query: string) => {
     try {
       const searchedFood = await getFoodByQuery(query);
-      setSearchResults(searchedFood);
+      if (searchedFood) {
+        setSearchResults(searchedFood);
+      } else {
+        ToastAndroid.show('Food not available. But there are plenty to discover.', ToastAndroid.CENTER);
+      }
     } catch (error) {
-      console.error('Error fetching random food:', error);
+      console.error('Error fetching searched food:', error);
+      Alert.alert('Error', 'Failed to fetch food items. Please try again.');
     }
   };
-
-  function getRandomValue(min: number = 10.00, max: number = 99.99): number {
-    const randomValue = Math.random() * (max - min) + min;
-    return parseFloat(randomValue.toFixed(2));
-  }
-  
-
-  // useEffect(() => {
-  //   getFoodCategoryCall();
-  // }, [])
-
-  // const getFoodCategoryCall = async () => {
-  //   try {
-  //     const category = await getFoodCategory();
-  //     setCategory(category);
-  //     setSelectCat(category[0].strCategory);
-  //   } catch (error) {
-  //     // Handle errors
-  //     console.error('Error fetching random food:', error);
-  //   }
-  // };
 
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
   useEffect(() => {
-    if (categories.length > 0) {
+    if (categories.length > 0 && categories[0]?.strCategory) {
       setSelectCat(categories[0].strCategory);
     }
   }, [categories])
-
-  // useEffect(() => {
-  //   if (selectCat !== null) {
-  //     getFoodByCategoryCall(selectCat);
-  //   }
-  // }, [selectCat])
 
   useEffect(() => {
     if (selectCat) {
@@ -86,15 +74,19 @@ const HomeScreen = ({ navigation }) => {
     }
   }, [dispatch, selectCat]);
 
-  // const getFoodByCategoryCall = async (category) => {
-  //   try {
-  //     const categoryFood = await getFoodByCategory(category);
-  //     setCategoryFood(categoryFood);
-  //   } catch (error) {
-  //     // Handle errors
-  //     console.error('Error fetching random food:', error);
-  //   }
-  // };
+
+  const handleAddToCart = (item) => {
+    const existingItem = cartItems.find(cartItem => cartItem.idMeal === item.idMeal);
+
+    if (existingItem) {
+      dispatch(updateCartItemQuantity({ idMeal: existingItem.idMeal, quantity: existingItem.quantity + 1 }));
+    } else {
+      const newItem = { ...item, quantity: 1 };
+      dispatch(addToCart(newItem));
+    }
+
+    ToastAndroid.show('Food added to cart.', ToastAndroid.CENTER);
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={{ marginLeft: -5 }} onPress={() => setSelectCat(item.strCategory)}>
@@ -116,10 +108,13 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {getRandomValue()}</Text>
-          <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
-            <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
-          </View>
+          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {item.price.toFixed(2)}</Text>
+          <TouchableOpacity onPress={() => handleAddToCart(item)}>
+            <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
+              <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
+            </View>
+          </TouchableOpacity>
+
         </View>
       </View>
     </View>
@@ -181,6 +176,7 @@ const HomeScreen = ({ navigation }) => {
             />
           }
         </View>
+        {loadingM && <ActivityIndicator size="large" color={COLORS.primary} />}
       </ScrollView>
 
     </View>

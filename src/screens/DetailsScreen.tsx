@@ -75,25 +75,25 @@ const DetailsScreen = ({ route, navigation }) => {
 
         <View style={styles.container}>
             <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
-            
+
             <View style={{ flex: 0.3 }}>
-            <ImageBackground source={require('../../assets/trans.png')} style={{flex:1}}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Icon name="arrow-back" size={25} color={COLORS.white} style={styles.icon} />
-                    </TouchableOpacity>
-                    <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={styles.title}></Text>
+                <ImageBackground source={require('../../assets/trans.png')} style={{ flex: 1 }}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name="arrow-back" size={25} color={COLORS.white} style={styles.icon} />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={styles.title}></Text>
+                        </View>
+
+                        <TouchableOpacity >
+                            <Icon name="favorite-outline" size={24} color={COLORS.white} style={styles.icon} />
+                        </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity >
-                        <Icon name="favorite-outline" size={24} color={COLORS.white} style={styles.icon} />
-                    </TouchableOpacity>
-                </View>
-
-                <View style={{ flex: 1, alignItems: 'center', position: 'relative', zIndex: 99, marginTop:screenHeight/20 }}>
-                    <Image source={{ uri: foodDetail?.strMealThumb }} style={styles.image} />
-                </View>
+                    <View style={{ flex: 1, alignItems: 'center', position: 'relative', zIndex: 99, marginTop: screenHeight / 20 }}>
+                        <Image source={{ uri: foodDetail?.strMealThumb }} style={styles.image} />
+                    </View>
                 </ImageBackground>
             </View>
 
@@ -114,7 +114,7 @@ const DetailsScreen = ({ route, navigation }) => {
                                     showsHorizontalScrollIndicator={false}
                                     // keyExtractor={(item) => item.strCategory}
                                     renderItem={renderItem}
-                                    style={{marginBottom:10}}
+                                    style={{ marginBottom: 10 }}
                                 // contentContainerStyle={styles.listContent}
                                 />
                             </View>
@@ -126,7 +126,7 @@ const DetailsScreen = ({ route, navigation }) => {
                     </View>
                 </ScrollView>
             </View>
-           
+
         </View>
 
     );
@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     image: {
-        width: screenWidth/2,
-        height: screenHeight/4,
+        width: screenWidth / 2,
+        height: screenHeight / 4,
         marginBottom: 10,
         borderRadius: 200,
         resizeMode: 'cover'
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     detail: {
         fontSize: 14,
         marginBottom: 5,
-        color:COLORS.text
+        color: COLORS.text
     },
     foodTitle: {
         fontSize: 20,

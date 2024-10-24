@@ -3,6 +3,7 @@ import { getFoodByCategory } from '../../network/apiService';
 
 interface Meal {
     idMeal: string;
+    price: string;
     strMeal: string;
     strMealThumb: string;
 }
@@ -35,7 +36,11 @@ const cateMealsSlice = createSlice({
             })
             .addCase(getMealsByCategory.fulfilled, (state, action) => {
                 state.loadingM = false;
-                state.meals = action.payload;
+                // state.meals = action.payload;
+                state.meals = action.payload.map((meal: Meal) => ({
+                    ...meal,
+                    price: Math.floor(Math.random() * 20) + 5, // Random price between 5 and 25
+                }));
             })
             .addCase(getMealsByCategory.rejected, (state, action) => {
                 state.loadingM = false;

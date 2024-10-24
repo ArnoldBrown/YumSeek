@@ -13,6 +13,7 @@ import DetailsScreen from './src/screens/DetailsScreen';
 import store from './src/store';
 import COLORS from './src/constants/colors';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import CartScreen from './src/screens/CartScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -83,6 +84,11 @@ const App = () => {
                   title: route.params?.food?.strMeal,
                   headerShown: false
                 })}
+              />
+               <RootStack.Screen
+                name="CartScreen"
+                component={CartScreen}
+                options={{ title: 'Cart', headerShown: false }} // You can customize the header options as needed
               />
             </RootStack.Navigator>
           </NavigationContainer>

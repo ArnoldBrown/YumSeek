@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import COLORS from '../constants/colors';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 interface HeaderProps {
   title: string;
@@ -10,6 +12,8 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
   const navigation = useNavigation();
+  const { count } = useSelector((state: RootState) => state.cart); // Access cart count
+
 
   const handleMenuPress = () => {
     // Handle menu press action
@@ -25,10 +29,19 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       <Text style={styles.title}>Welcome to <Text style={styles.titleApp}>YumSeek</Text></Text>
       
       </View>
-      
-      <TouchableOpacity onPress={handleMenuPress}>
-        <Icon name="menu" size={24} color="black" style={styles.icon} />
+
+      <TouchableOpacity onPress={() => navigation.navigate('CartScreen')}>
+        <Icon name="shopping-cart" size={24} color="black" style={styles.icon}  />
+        {count > 0 && (
+          <View style={styles.cartCount}>
+            <Text style={styles.cartCountText}>{count}</Text>
+          </View>
+        )}
       </TouchableOpacity>
+      
+      {/* <TouchableOpacity onPress={handleMenuPress}>
+        <Icon name="shopping-cart" size={24} color="black" style={styles.icon} />
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -65,6 +78,21 @@ const styles = StyleSheet.create({
     },
     icon: {
       paddingHorizontal: 1,
+    },
+    cartCount: {
+      position: 'absolute',
+      right: -5,
+      top: -8,
+      backgroundColor: 'red',
+      borderRadius: 10,
+      width: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    cartCountText: {
+      color: 'white',
+      fontSize: 12,
     },
   });
   
