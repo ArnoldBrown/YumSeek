@@ -40,18 +40,20 @@ const TabNavigator = () => (
       tabBarInactiveTintColor: 'gray', // Inactive icon color
       tabBarStyle: {
         position: 'absolute',
-        bottom: 10,
-        left: '2%',
-        right: '2%',
+        bottom: 5,
+        left: '4%',
+        right: '4%',
         height: 50,
         borderRadius: 30,
-        backgroundColor: COLORS.primary, // Background color of the tab bar
-        borderTopWidth: 0,
-        shadowColor: COLORS.text,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.25,
-        shadowRadius: 10,
-        elevation: 5,
+        backgroundColor: COLORS.primary,
+        // borderTopWidth: 0,
+        // shadowColor: COLORS.text,
+        // shadowOffset: { width: 0, height: 10 },
+        // shadowOpacity: 0.25,
+        // shadowRadius: 10,
+        // elevation: 5,
+        borderWidth:1,
+        borderColor: COLORS.white
       },
     })}
   >

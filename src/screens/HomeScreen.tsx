@@ -12,24 +12,24 @@ import { getCategories } from '../store/slices/categorySlice';
 import { getMealsByCategory } from '../store/slices/cateMealsSlice';
 import { AppDispatch } from '../store';
 import { addToCart, updateCartItemQuantity } from '../store/slices/cartSlice';
+import LottieView from 'lottie-react-native';
+// import { addFavorite , removeFavorite} from '../store/slices/favoritesSlice';
 
 
 const HomeScreen = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-
   const { categories, loading, error } = useSelector((state: RootState) => state.categories);
   const { meals, loadingM, errorM } = useSelector((state: RootState) => state.meals);
-  console.log("dvdsvds", meals)
-
+  // const favorites = useSelector((state: RootState) => state.favorites);
+  // console.log("favorites", favorites)
+  const animation = useRef<LottieView>(null);
   const [category, setCategory] = useState<any>(null);
   const [selectCat, setSelectCat] = useState(null);
   const [categoryFood, setCategoryFood] = useState<any>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const lastSearchTextRef = useRef<string | null>(null);
-
-
 
   const handleSearch = useCallback((searchText: string) => {
     // Simulate a search operation
@@ -39,6 +39,9 @@ const HomeScreen = () => {
     }
   }, []); // No dependencies, so it will only be created once
 
+  useEffect(() => {
+    animation.current?.play();
+  }, []);
 
   const handleClear = () => {
     setSearchResults([]);
@@ -88,17 +91,35 @@ const HomeScreen = () => {
     ToastAndroid.show('Food added to cart.', ToastAndroid.CENTER);
   };
 
+  // const handleAddToFavour = (item) => {
+  //   const isFavorite = favorites.some((favItem) => favItem.idMeal === item.idMeal);
+
+  //   if (isFavorite) {
+  //     dispatch(removeFavorite(item));
+  //   } else {
+  //     dispatch(addFavorite(item));
+  //   }
+  // }
+
   const renderItem = ({ item }) => (
     <TouchableOpacity style={{ marginLeft: -5 }} onPress={() => setSelectCat(item.strCategory)}>
       <Text style={[styles.categoryLabel, { color: selectCat === item.strCategory ? COLORS.white : COLORS.black, backgroundColor: selectCat === item.strCategory ? COLORS.primary : COLORS.cardBg }]}>{item.strCategory}</Text>
     </TouchableOpacity>
   );
 
+  const getItemQuantity = (itemId) => {
+    const itemInCart = cartItems.find(cartItem => cartItem.idMeal === itemId);
+    return itemInCart ? itemInCart.quantity : 0;
+  };
+
   const renderFoodItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <View style={{ padding: 10 }}>
-        <View style={{ alignSelf: 'flex-end' }}>
-          <Icon name="favorite-outline" size={20} color={COLORS.text} />
+        <View style={{justifyContent:'space-between', flexDirection:'row' }}>
+          <Text style={{color: getItemQuantity(item.idMeal) === 0 ? COLORS.cardBg : COLORS.primary}}>{getItemQuantity(item.idMeal)}</Text>
+          {/* <TouchableOpacity onPress={() => handleAddToFavour(item)}> */}
+              <Icon name="favorite-outline" size={20} color={COLORS.text} />
+          {/* </TouchableOpacity> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
           <Image source={{ uri: item?.strMealThumb }} style={styles.itemImage} />
@@ -108,7 +129,7 @@ const HomeScreen = () => {
 
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {item.price.toFixed(2)}</Text>
+          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {(item.price ?? 0).toFixed(2)}</Text>
           <TouchableOpacity onPress={() => handleAddToCart(item)}>
             <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
               <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
@@ -176,7 +197,16 @@ const HomeScreen = () => {
             />
           }
         </View>
-        {loadingM && <ActivityIndicator size="large" color={COLORS.primary} />}
+        {loadingM ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <LottieView
+                ref={animation}
+                source={require('../../assets/animations/loader.json')}
+                autoPlay
+                loop
+                style={{ width: 100, height: 100 }}
+              />
+            </View> : null }
+        
       </ScrollView>
 
     </View>

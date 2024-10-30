@@ -1,5 +1,5 @@
 // DetailsScreen.tsx
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Linking, StatusBar, ImageBackground } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import COLORS from '../constants/colors';
@@ -7,6 +7,7 @@ import { getFoodDetail } from '../network/apiService';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { APIS_ENDPOINT } from '../network/constant';
+import LottieView from 'lottie-react-native';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -14,11 +15,18 @@ const DetailsScreen = ({ route, navigation }) => {
     const { mealId } = route.params;
     const [foodDetail, setFoodDetail] = useState<any>(null);
     const [ingredientArray, setIngredientArray] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+    const animation = useRef<LottieView>(null);
 
     console.log("mealIddd", mealId);
 
     useEffect(() => {
+        animation.current?.play();
+    }, []);
+
+    useEffect(() => {
         if (mealId !== null) {
+            setLoading(true)
             getFoodDetailCall(mealId);
         }
     }, [mealId])
@@ -30,6 +38,7 @@ const DetailsScreen = ({ route, navigation }) => {
             const ingredients = getIngredients(mealDetail);
             console.log("ingredientt", ingredients);
             setIngredientArray(ingredients);
+            setLoading(false)
             // setSelectCat(category[0].strCategory);
         } catch (error) {
             // Handle errors
@@ -98,7 +107,15 @@ const DetailsScreen = ({ route, navigation }) => {
             </View>
 
             <View style={{ flex: 0.7 }}>
-                <ScrollView>
+                {loading ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <LottieView
+                        ref={animation}
+                        source={require('../../assets/animations/loader.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 100, height: 100 }}
+                    />
+                </View> : <ScrollView>
                     <View style={{ padding: 20, backgroundColor: COLORS.white, borderTopLeftRadius: 30, borderTopRightRadius: 30 }}>
                         <Text style={[styles.foodTitle, { marginTop: 50 }]}>{foodDetail?.strMeal}</Text>
                         <Text style={styles.detail}><Text style={styles.labelTitle}>Area:</Text> {foodDetail?.strArea}</Text>
@@ -119,12 +136,13 @@ const DetailsScreen = ({ route, navigation }) => {
                                 />
                             </View>
                         }
+                        {foodDetail?.strSource ? <TouchableOpacity onPress={() => handlePress()}>
+                            <Text style={styles.extraLink}>Read More</Text>
+                        </TouchableOpacity> : null}
 
-                        <TouchableOpacity onPress={() => handlePress()}>
-                            <Text style={styles.extraLink}><Text style={styles.labelTitle}>Source:</Text> {foodDetail?.strSource}</Text>
-                        </TouchableOpacity>
                     </View>
-                </ScrollView>
+                </ScrollView>}
+
             </View>
 
         </View>

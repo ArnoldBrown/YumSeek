@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     quantityButton: {
         fontSize: 18,
         paddingHorizontal: 10,
-        color: '#007bff',
+        color: COLORS.green_btn,
     },
     quantityText: {
         fontSize: 16,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Dimensions, StatusBar } from 'react-native';
 import COLORS from '../constants/colors';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -6,10 +6,14 @@ import { getFoodArea, getFoodByArea, getFoodByCategory, getFoodByIngredient, get
 import { APIS_ENDPOINT } from '../network/constant';
 import CountryFlag from 'react-native-country-flag';
 import { countries } from '../constants/countries';
+import { ActivityIndicator } from 'react-native-paper';
+import LottieView from 'lottie-react-native';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 const SearchScreen = ({ navigation }) => {
+
+  const animation = useRef<LottieView>(null);
 
   const [selectFilter, setFilter] = useState('Category');
   const [category, setCategory] = useState<any>(null);
@@ -17,6 +21,11 @@ const SearchScreen = ({ navigation }) => {
   const [ingredient, setIngredient] = useState<any>(null);
   const [selectFilterKey, setFilterKey] = useState('');
   const [food, setFood] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    animation.current?.play();
+  }, []);
 
   useEffect(() => {
     getFoodCategoryCall();
@@ -25,6 +34,7 @@ const SearchScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    setLoading(true)
     if (selectFilter === 'Category') {
       getFoodByCategoryCall(selectFilterKey);
     } else if (selectFilter === 'Area') {
@@ -45,6 +55,7 @@ const SearchScreen = ({ navigation }) => {
       const category = await getFoodCategory();
       setCategory(category);
       // setSelectCat(category[0].strCategory);
+      setLoading(false)
     } catch (error) {
       // Handle errors
       console.error('Error fetching random food:', error);
@@ -55,6 +66,7 @@ const SearchScreen = ({ navigation }) => {
     try {
       const area = await getFoodArea();
       setArea(area);
+      setLoading(false)
       // setSelectCat(category[0].strCategory);
     } catch (error) {
       // Handle errors
@@ -68,6 +80,7 @@ const SearchScreen = ({ navigation }) => {
       const sortedIngredients = ingredient.sort((a, b) => a.strIngredient.localeCompare(b.strIngredient));
 
       setIngredient(sortedIngredients);
+      setLoading(false)
       // setSelectCat(category[0].strCategory);
     } catch (error) {
       // Handle errors
@@ -96,6 +109,7 @@ const SearchScreen = ({ navigation }) => {
       const categoryFood = await getFoodByCategory(filterKey);
       setFood(categoryFood);
       // setSelectCat(category[0].strCategory);
+      setLoading(false)
     } catch (error) {
       // Handle errors
       console.error('Error fetching random food:', error);
@@ -107,6 +121,7 @@ const SearchScreen = ({ navigation }) => {
       const areaFood = await getFoodByArea(filterKey);
       setFood(areaFood);
       // setSelectCat(category[0].strCategory);
+      setLoading(false)
     } catch (error) {
       // Handle errors
       console.error('Error fetching random food:', error);
@@ -118,6 +133,7 @@ const SearchScreen = ({ navigation }) => {
       const ingredFood = await getFoodByIngredient(filterKey);
       setFood(ingredFood);
       // setSelectCat(category[0].strCategory);
+      setLoading(false)
     } catch (error) {
       // Handle errors
       console.error('Error fetching random food:', error);
@@ -212,7 +228,18 @@ const SearchScreen = ({ navigation }) => {
             {selectFilter === "Area" ? <CountryFlag isoCode={getCountryIsoCode(selectFilterKey)} size={40} /> : <Image source={{ uri: selectFilter === 'Category' ? APIS_ENDPOINT.BASE_URL + APIS_ENDPOINT.IMG_CATEGORY + selectFilterKey + '.png' : APIS_ENDPOINT.BASE_URL + APIS_ENDPOINT.IMG_INGREDIENT + selectFilterKey + '.png' }} style={styles.itemImage} />}
           </View>
 
-          {/* <View style={{ flex: 1 }}> */}
+          {loading ? (
+
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <LottieView
+                ref={animation}
+                source={require('../../assets/animations/loader.json')}
+                autoPlay
+                loop
+                style={{ width: 100, height: 100 }}
+              />
+            </View>
+          ) : (
             <FlatList
               data={food}
               renderItem={renderFoodItem}
@@ -228,18 +255,8 @@ const SearchScreen = ({ navigation }) => {
               columnWrapperStyle={styles.row}
               ListEmptyComponent={ListEmptyComponent}
             />
-          {/* </View> */}
+          )}
 
-          {/* <FlatList
-            data={food}
-            renderItem={renderFoodItem}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.idMeal}
-            numColumns={2}
-            style={{ marginTop: 10 }}
-            contentContainerStyle={{ paddingBottom: 70 }}
-            ListEmptyComponent={ListEmptyComponent}
-          /> */}
         </View>
       </View>
     </View>
@@ -272,7 +289,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   itemContainer: {
-    width:screenWidth/3.4,
+    width: screenWidth / 3.4,
     // height: screenHeight/6,
     flexDirection: 'column',
     alignItems: 'center',
