@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
-import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import React, { useEffect, useRef } from 'react';
+import { ActivityIndicator, Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,19 +12,37 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import DetailsScreen from './src/screens/DetailsScreen';
 import store from './src/store';
 import COLORS from './src/constants/colors';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
 import CartScreen from './src/screens/CartScreen';
-
+import LottieView from 'lottie-react-native';
 
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
+
+const SplashScreen = ({ navigation }) => {
+  const animation = useRef<LottieView>(null);
+
+  return (
+    <View style={styles.splashContainer}>
+      <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+      <LottieView
+        ref={animation}
+        source={require('./assets/animations/loader.json')}
+        autoPlay
+        loop={false}
+        onAnimationFinish={() => navigation.replace('Main')}
+        style={{ width: 100, height: 100 }}
+      />
+      <Text style={styles.splashText}>YupSeek</Text>
+    </View>
+  );
+};
 
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
         let iconName;
-
         if (route.name === 'Home') {
           iconName = 'home';
         } else if (route.name === 'Search') {
@@ -32,27 +50,28 @@ const TabNavigator = () => (
         } else if (route.name === 'Profile') {
           iconName = 'account';
         }
-
         return <Icon name={iconName} color={color} size={size} />;
       },
-      tabBarLabel: () => null, // Hide the title in the tab bar
-      tabBarActiveTintColor: COLORS.active, // Active icon color
-      tabBarInactiveTintColor: 'gray', // Inactive icon color
+      tabBarActiveBackgroundColor:COLORS.white,
+      // tabBarItemStyle:{alignSelf:'center',height:40, borderRadius:20, marginHorizontal:35},
+      tabBarItemStyle:{alignSelf:'center',height:35, borderRadius:20, marginHorizontal:15},
+      tabBarLabel: () => <View />, // Remove title spacing
+      tabBarActiveTintColor: COLORS.primary, 
+      tabBarInactiveTintColor: COLORS.white,
       tabBarStyle: {
         position: 'absolute',
-        bottom: 5,
+        bottom: 10,
         left: '4%',
         right: '4%',
-        height: 50,
-        borderRadius: 30,
+        height: 55,
+        borderRadius: 25,
         backgroundColor: COLORS.primary,
-        // borderTopWidth: 0,
-        // shadowColor: COLORS.text,
-        // shadowOffset: { width: 0, height: 10 },
-        // shadowOpacity: 0.25,
-        // shadowRadius: 10,
-        // elevation: 5,
-        borderWidth:1,
+        elevation: 5,
+        shadowColor: COLORS.text,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        borderWidth: 1,
         borderColor: COLORS.white
       },
     })}
@@ -67,13 +86,18 @@ const App = () => {
   return (
     <Provider store={store}>
       <PaperProvider>
-
-        <KeyboardAvoidingView style={{ flex: 1 }}
+        <KeyboardAvoidingView 
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Adjust this offset as needed
         >
           <NavigationContainer>
             <RootStack.Navigator>
+              <RootStack.Screen
+                name="Splash"
+                component={SplashScreen}
+                options={{ headerShown: false }}
+              />
               <RootStack.Screen
                 name="Main"
                 component={TabNavigator}
@@ -87,19 +111,32 @@ const App = () => {
                   headerShown: false
                 })}
               />
-               <RootStack.Screen
+              <RootStack.Screen
                 name="CartScreen"
                 component={CartScreen}
-                options={{ title: 'Cart', headerShown: false }} // You can customize the header options as needed
+                options={{ title: 'Cart', headerShown: false }}
               />
             </RootStack.Navigator>
           </NavigationContainer>
         </KeyboardAvoidingView>
-
-
       </PaperProvider>
     </Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+  },
+  splashText: {
+    marginTop: 20,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: COLORS.white,
+  },
+});
 
 export default App;

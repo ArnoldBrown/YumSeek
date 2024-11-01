@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import COLORS from '../constants/colors';
@@ -7,11 +7,17 @@ import Header from '../components/Header';
 import { useNavigation } from '@react-navigation/native';
 import { clearCart, increaseQuantity, decreaseQuantity } from '../store/slices/cartSlice';
 import { RootState } from '../store';
+import LottieView from 'lottie-react-native';
 
 const CartScreen = () => {
     const { items, totalAmount } = useSelector((state: RootState) => state.cart);
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const animation = useRef<LottieView>(null);
+
+    useEffect(() => {
+        animation.current?.play();
+      }, []);
 
     const handleIncreaseQuantity = (idMeal) => {
         dispatch(increaseQuantity(idMeal));
@@ -52,6 +58,7 @@ const CartScreen = () => {
 
         </View>
     );
+    
 
     return (
         <View style={styles.container}>
@@ -85,7 +92,15 @@ const CartScreen = () => {
                     </View>
                 </View>
             ) : (
-                <Text style={styles.emptyCart}>Your cart is empty</Text>
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <LottieView
+                ref={animation}
+                source={require('../../assets/animations/empty_cart.json')}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+              />
+                </View>
             )}
 
         </View>
