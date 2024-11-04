@@ -12,7 +12,7 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import DetailsScreen from './src/screens/DetailsScreen';
 import store from './src/store';
 import COLORS from './src/constants/colors';
-import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View, Animated, Easing } from 'react-native';
 import CartScreen from './src/screens/CartScreen';
 import LottieView from 'lottie-react-native';
 
@@ -21,6 +21,26 @@ const RootStack = createStackNavigator();
 
 const SplashScreen = ({ navigation }) => {
   const animation = useRef<LottieView>(null);
+  // const animatedValue = useRef(new Animated.Value(0)).current;
+
+  // const handleAnimation = () => {
+  //   animatedValue.setValue(0);
+
+  //   Animated.sequence([
+  //     Animated.timing(animatedValue, {
+  //       toValue: 1,
+  //       useNativeDriver: true,
+  //       easing: Easing.linear,
+  //       duration: 400,
+  //     }),
+  //     Animated.spring(animatedValue, {
+  //       toValue: 2,
+  //       delay: 1000,
+  //       friction: 1,
+  //       useNativeDriver: true,
+  //     }),
+  //   ]).start();
+  // };
 
   return (
     <View style={styles.splashContainer}>
@@ -34,6 +54,7 @@ const SplashScreen = ({ navigation }) => {
         style={{ width: 100, height: 100 }}
       />
       <Text style={styles.splashText}>YupSeek</Text>
+      {/* <Animated.View style={{height: 150, width: 150, backgroundColor: 'red', transform: [{ scale: handleAnimation() }] }} /> */}
     </View>
   );
 };
@@ -43,20 +64,16 @@ const TabNavigator = () => (
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
         let iconName;
-        if (route.name === 'Home') {
-          iconName = 'home';
-        } else if (route.name === 'Search') {
-          iconName = 'magnify';
-        } else if (route.name === 'Profile') {
-          iconName = 'account';
-        }
+        if (route.name === 'Home') iconName = 'home';
+        else if (route.name === 'Search') iconName = 'magnify';
+        else if (route.name === 'Profile') iconName = 'account';
         return <Icon name={iconName} color={color} size={size} />;
       },
+      tabBarLabel: () => <View />,
       tabBarActiveBackgroundColor:COLORS.white,
-      // tabBarItemStyle:{alignSelf:'center',height:40, borderRadius:20, marginHorizontal:35},
       tabBarItemStyle:{alignSelf:'center',height:35, borderRadius:20, marginHorizontal:15},
-      tabBarLabel: () => <View />, // Remove title spacing
-      tabBarActiveTintColor: COLORS.primary, 
+      tabBarAccessibilityLabel: route.name,  // For accessibility
+      tabBarActiveTintColor: COLORS.primary,
       tabBarInactiveTintColor: COLORS.white,
       tabBarStyle: {
         position: 'absolute',
@@ -75,6 +92,7 @@ const TabNavigator = () => (
         borderColor: COLORS.white
       },
     })}
+
   >
     <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
     <Tab.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
@@ -86,7 +104,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <PaperProvider>
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Adjust this offset as needed
@@ -133,10 +151,11 @@ const styles = StyleSheet.create({
   },
   splashText: {
     marginTop: 20,
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
     color: COLORS.white,
   },
 });
 
 export default App;
+

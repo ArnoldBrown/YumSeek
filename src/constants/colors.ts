@@ -1,7 +1,6 @@
 const COLORS = {
-    // primary: '#fc4e03',
-    // primary: '#fcba03',
     primary: '#5C4033',
+    // primary:'#2fb076',
     secondary: '#FFA07A',
     background: '#ffffff',
     primary_two: '#F9EBEA',//faeabe
@@ -11,6 +10,7 @@ const COLORS = {
     
     active: '#ffffff',
     inactive: '#CCCCCC',
+    inactive_primary: '#B3A49D',
     text: '#333333',
     cardBg: '#F3F2F2',
     text_lite: '#636363',

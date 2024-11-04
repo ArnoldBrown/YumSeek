@@ -77,7 +77,7 @@ const SearchScreen = ({ navigation }) => {
   const getFoodIngredientCall = async () => {
     try {
       const ingredient = await getFoodIngredient();
-      const sortedIngredients = ingredient.sort((a, b) => a.strIngredient.localeCompare(b.strIngredient));
+      const sortedIngredients = ingredient.sort((a: { strIngredient: string; }, b: { strIngredient: any; }) => a.strIngredient.localeCompare(b.strIngredient));
 
       setIngredient(sortedIngredients);
       setLoading(false)
@@ -88,7 +88,7 @@ const SearchScreen = ({ navigation }) => {
     }
   };
 
-  const setCategoryMainFun = (cat) => {
+  const setCategoryMainFun = (cat: React.SetStateAction<string>) => {
     console.log("cattttt", cat);
     setFilter(cat);
     if (cat === 'Category') {
@@ -100,11 +100,11 @@ const SearchScreen = ({ navigation }) => {
     }
   }
 
-  const setCategoryFun = (item) => {
+  const setCategoryFun = (item: { strCategory: React.SetStateAction<string>; strArea: React.SetStateAction<string>; strIngredient: React.SetStateAction<string>; }) => {
     setFilterKey(selectFilter === 'Category' ? item.strCategory : selectFilter === 'Area' ? item.strArea : item.strIngredient);
   }
 
-  const getFoodByCategoryCall = async (filterKey) => {
+  const getFoodByCategoryCall = async (filterKey: string) => {
     try {
       const categoryFood = await getFoodByCategory(filterKey);
       setFood(categoryFood);
@@ -116,7 +116,7 @@ const SearchScreen = ({ navigation }) => {
     }
   };
 
-  const getFoodByAreaCall = async (filterKey) => {
+  const getFoodByAreaCall = async (filterKey: string) => {
     try {
       const areaFood = await getFoodByArea(filterKey);
       setFood(areaFood);
@@ -128,7 +128,7 @@ const SearchScreen = ({ navigation }) => {
     }
   };
 
-  const getFoodByIngredientCall = async (filterKey) => {
+  const getFoodByIngredientCall = async (filterKey: string) => {
     try {
       const ingredFood = await getFoodByIngredient(filterKey);
       setFood(ingredFood);
@@ -145,7 +145,7 @@ const SearchScreen = ({ navigation }) => {
     return country ? country.isoCode : 'Unknown'; // Return 'Unknown' if country not found
   }
 
-  const handlePress = (id) => {
+  const handlePress = (id: any) => {
     navigation.navigate('Details', { mealId: id });
   };
 
@@ -194,19 +194,19 @@ const SearchScreen = ({ navigation }) => {
       <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
       <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor: COLORS.primary }}>
         <TouchableOpacity onPress={() => setCategoryMainFun('Category')}>
-          <Text style={[styles.cateText, { color: selectFilter == 'Category' ? COLORS.white : COLORS.black }]}>Category</Text>
+          <Text style={[styles.cateText, { color: selectFilter == 'Category' ? COLORS.white : COLORS.inactive_primary }]}>Category</Text>
           <View style={{ width: '100%', height: 5, backgroundColor: selectFilter == 'Category' ? COLORS.white : COLORS.primary }} />
         </TouchableOpacity>
 
         <View style={{ backgroundColor: COLORS.cardBg, width: 1 }} />
         <TouchableOpacity onPress={() => setCategoryMainFun('Area')}>
-          <Text style={[styles.cateText, { color: selectFilter == 'Area' ? COLORS.white : COLORS.black }]}>Area</Text>
+          <Text style={[styles.cateText, { color: selectFilter == 'Area' ? COLORS.white : COLORS.inactive_primary }]}>Area</Text>
           <View style={{ width: '100%', height: 5, backgroundColor: selectFilter == 'Area' ? COLORS.white : COLORS.primary }} />
         </TouchableOpacity>
 
         <View style={{ backgroundColor: COLORS.cardBg, width: 1 }} />
         <TouchableOpacity onPress={() => setCategoryMainFun('Ingredient')}>
-          <Text style={[styles.cateText, { color: selectFilter == 'Ingredient' ? COLORS.white : COLORS.black }]}>Ingredients</Text>
+          <Text style={[styles.cateText, { color: selectFilter == 'Ingredient' ? COLORS.white : COLORS.inactive_primary }]}>Ingredients</Text>
           <View style={{ width: '100%', height: 5, backgroundColor: selectFilter == 'Ingredient' ? COLORS.white : COLORS.primary }} />
         </TouchableOpacity>
       </View>
@@ -224,7 +224,16 @@ const SearchScreen = ({ navigation }) => {
 
         </View>
         <View style={{ flex: 0.66, backgroundColor: COLORS.white, flexDirection: 'column' }}>
-          <View style={{ alignItems: 'center' }}>
+          <View style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: COLORS.inactive_primary,
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            marginHorizontal: 70,
+            marginTop: 5,
+          }}>
             {selectFilter === "Area" ? <CountryFlag isoCode={getCountryIsoCode(selectFilterKey)} size={40} /> : <Image source={{ uri: selectFilter === 'Category' ? APIS_ENDPOINT.BASE_URL + APIS_ENDPOINT.IMG_CATEGORY + selectFilterKey + '.png' : APIS_ENDPOINT.BASE_URL + APIS_ENDPOINT.IMG_INGREDIENT + selectFilterKey + '.png' }} style={styles.itemImage} />}
           </View>
 
@@ -277,10 +286,11 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   itemImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    resizeMode: 'stretch'
+    width: 90,
+    height: 90,
+    borderRadius: 50,
+    resizeMode: 'center',
+    marginHorizontal: 70,
   },
   foodImage: {
     width: 70,

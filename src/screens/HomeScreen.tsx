@@ -107,7 +107,7 @@ const HomeScreen = () => {
     </TouchableOpacity>
   );
 
-  const getItemQuantity = (itemId) => {
+  const getItemQuantity = (itemId: string) => {
     const itemInCart = cartItems.find(cartItem => cartItem.idMeal === itemId);
     return itemInCart ? itemInCart.quantity : 0;
   };
@@ -197,7 +197,7 @@ const HomeScreen = () => {
             />
           }
         </View>
-        {loadingM ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        {loading || loadingM ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <LottieView
                 ref={animation}
                 source={require('../../assets/animations/loader.json')}

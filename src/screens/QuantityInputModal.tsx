@@ -58,3 +58,7 @@ const QuantityInputModal = ({ visible, onClose, onAdd }) => {
 };
 
 export default QuantityInputModal;
+
+function alert(arg0: string) {
+  throw new Error('Function not implemented.');
+}
