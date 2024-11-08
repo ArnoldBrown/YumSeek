@@ -16,6 +16,8 @@ import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View, Anim
 import CartScreen from './src/screens/CartScreen';
 import LottieView from 'lottie-react-native';
 
+import { createNotificationChannel } from './src/notification/notificationService';
+
 const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
@@ -41,6 +43,7 @@ const SplashScreen = ({ navigation }) => {
   //     }),
   //   ]).start();
   // };
+ 
 
   return (
     <View style={styles.splashContainer}>
@@ -101,6 +104,12 @@ const TabNavigator = () => (
 );
 
 const App = () => {
+  useEffect(() => {
+    // Create notification channel on app startup (only once)
+    createNotificationChannel();
+  }, []);
+ 
+
   return (
     <Provider store={store}>
       <PaperProvider>

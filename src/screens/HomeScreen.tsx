@@ -13,6 +13,7 @@ import { getMealsByCategory } from '../store/slices/cateMealsSlice';
 import { AppDispatch } from '../store';
 import { addToCart, updateCartItemQuantity } from '../store/slices/cartSlice';
 import LottieView from 'lottie-react-native';
+import { displayNotification } from '../notification/notificationService'
 // import { addFavorite , removeFavorite} from '../store/slices/favoritesSlice';
 
 
@@ -30,6 +31,14 @@ const HomeScreen = () => {
   const [categoryFood, setCategoryFood] = useState<any>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const lastSearchTextRef = useRef<string | null>(null);
+
+  const triggerNotification = () => {
+    const title = 'Welcome back';
+    const body = 'Find the best food around you.';
+    
+    // Call displayNotification with dynamic title and body
+    displayNotification(title, body);
+  };
 
   const handleSearch = useCallback((searchText: string) => {
     // Simulate a search operation
@@ -62,6 +71,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
+    triggerNotification();
     dispatch(getCategories());
   }, [dispatch]);
 

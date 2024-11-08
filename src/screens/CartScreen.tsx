@@ -8,12 +8,21 @@ import { useNavigation } from '@react-navigation/native';
 import { clearCart, increaseQuantity, decreaseQuantity } from '../store/slices/cartSlice';
 import { RootState } from '../store';
 import LottieView from 'lottie-react-native';
+import { displayNotification } from '../notification/notificationService'
 
 const CartScreen = () => {
     const { items, totalAmount } = useSelector((state: RootState) => state.cart);
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const animation = useRef<LottieView>(null);
+
+    const triggerNotification = () => {
+        const title = 'Success';
+        const body = 'Your order placed successfully.';
+
+        // Call displayNotification with dynamic title and body
+        displayNotification(title, body);
+    };
 
     useEffect(() => {
         animation.current?.play();
@@ -87,9 +96,12 @@ const CartScreen = () => {
                         <Text style={{ color: 'black', fontWeight: 'bold' }}>$ {totalAmount.toFixed(2)}</Text>
                     </View>
 
-                    <View style={styles.bottomView}>
-                        <Text style={styles.bottomText}>Proceed</Text>
-                    </View>
+                    <TouchableOpacity onPress={() => triggerNotification()}>
+                        <View style={styles.bottomView}>
+                            <Text style={styles.bottomText}>Proceed</Text>
+                        </View>
+                    </TouchableOpacity>
+
                 </View>
             ) : (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
