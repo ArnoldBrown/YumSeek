@@ -5,6 +5,25 @@ import { APIS_ENDPOINT } from './constant';
 export const getRandomFood = async () => {
     try {
         const mealResponse = await callApi(`${APIS_ENDPOINT.BASE_URL}${APIS_ENDPOINT.RANDOM_FOOD}`, 'GET');
+        
+        if (!mealResponse || !mealResponse.meals || mealResponse.meals.length === 0) {
+            throw new Error('No meal found in response');
+        }
+
+        const [randomMeal] = mealResponse.meals;
+        // console.log('Random Meal:', randomMeal);
+
+        return randomMeal;
+    } catch (error) {
+        console.error('Error fetching random meal:', error.message || error);
+        throw error;
+    }
+};
+
+
+export const getRandomFood1 = async () => {
+    try {
+        const mealResponse = await callApi(`${APIS_ENDPOINT.BASE_URL}${APIS_ENDPOINT.RANDOM_FOOD}`, 'GET');
         const randomMeal = mealResponse.meals[0];
 
         // console.log('Random Meal:', mealResponse);
@@ -37,9 +56,16 @@ export const getFoodByQuery = async (query:string) => {
     console.log("coming","yessss")
     try {
         const queryFoodResponse = await callApi(`${APIS_ENDPOINT.BASE_URL}${APIS_ENDPOINT.FOOD_BY_NAME}${query}`, 'GET');
-        const queryFood = queryFoodResponse.meals;
+        // const queryFood = queryFoodResponse.meals;
 
-        console.log('Food By Name:', queryFoodResponse);
+        const queryFood = queryFoodResponse.meals.map((meal: any) => ({
+            ...meal,
+            price: Number((Math.random() * (20 - 5) + 5).toFixed(2)), // Random price between 5 and 20
+          }));
+          
+        //   console.log(queryFood);
+
+        console.log('Food By Name:', queryFood);
 
         return queryFood; // Return the random meal from the function
     } catch (error) {

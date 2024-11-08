@@ -77,8 +77,7 @@ const HomeScreen = () => {
     }
   }, [dispatch, selectCat]);
 
-
-  const handleAddToCart = (item) => {
+  const handleAddToCart = useCallback((item) => {
     const existingItem = cartItems.find(cartItem => cartItem.idMeal === item.idMeal);
 
     if (existingItem) {
@@ -89,17 +88,7 @@ const HomeScreen = () => {
     }
 
     ToastAndroid.show('Food added to cart.', ToastAndroid.CENTER);
-  };
-
-  // const handleAddToFavour = (item) => {
-  //   const isFavorite = favorites.some((favItem) => favItem.idMeal === item.idMeal);
-
-  //   if (isFavorite) {
-  //     dispatch(removeFavorite(item));
-  //   } else {
-  //     dispatch(addFavorite(item));
-  //   }
-  // }
+  }, [cartItems, dispatch]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={{ marginLeft: -5 }} onPress={() => setSelectCat(item.strCategory)}>
@@ -107,18 +96,18 @@ const HomeScreen = () => {
     </TouchableOpacity>
   );
 
-  const getItemQuantity = (itemId: string) => {
+  const getItemQuantity = useCallback((itemId: string) => {
     const itemInCart = cartItems.find(cartItem => cartItem.idMeal === itemId);
     return itemInCart ? itemInCart.quantity : 0;
-  };
+  }, [cartItems]);
 
   const renderFoodItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <View style={{ padding: 10 }}>
-        <View style={{justifyContent:'space-between', flexDirection:'row' }}>
-          <Text style={{color: getItemQuantity(item.idMeal) === 0 ? COLORS.cardBg : COLORS.primary}}>{getItemQuantity(item.idMeal)}</Text>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+          <Text style={{ color: getItemQuantity(item.idMeal) === 0 ? COLORS.cardBg : COLORS.primary }}>{getItemQuantity(item.idMeal)}</Text>
           {/* <TouchableOpacity onPress={() => handleAddToFavour(item)}> */}
-              <Icon name="favorite-outline" size={20} color={COLORS.text} />
+          <Icon name="favorite-outline" size={20} color={COLORS.text} />
           {/* </TouchableOpacity> */}
         </View>
         <View style={{ alignSelf: 'center' }}>
@@ -129,10 +118,10 @@ const HomeScreen = () => {
 
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ marginLeft: 30, fontWeight: '700', color: COLORS.text }}>$ {(item.price ?? 0).toFixed(2)}</Text>
+          <Text style={styles.priceText}>$ {(item.price ?? 0).toFixed(2)}</Text>
           <TouchableOpacity onPress={() => handleAddToCart(item)}>
-            <View style={{ backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 2, borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
-              <Text style={{ fontSize: 20, color: COLORS.white }}>+</Text>
+            <View style={styles.addToCartButton}>
+              <Text style={styles.addToCartText}>+</Text>
             </View>
           </TouchableOpacity>
 
@@ -147,9 +136,19 @@ const HomeScreen = () => {
       <Header title="Your Screen Title" />
 
       <View style={{ margin: 10 }}>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing: 1 }}>Find The <Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing: 3 }}>Best</Text></Text>
-        <Text style={{ fontSize: 25, color: COLORS.text_lite, letterSpacing: 1 }}><Text style={{ fontWeight: 'bold', color: COLORS.black, letterSpacing: 3 }}>Food</Text> Around You</Text>
-
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View>
+            <Text style={styles.titleLabelNormal}>Find The <Text style={styles.titleLabelBold}>Best</Text></Text>
+            <Text style={styles.titleLabelNormal}><Text style={styles.titleLabelBold}>Food</Text> Around You</Text>
+          </View>
+          <LottieView
+            ref={animation}
+            source={require('../../assets/animations/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 70, height: 70, marginRight: 20 }}
+          />
+        </View>
         <SearchBar onSearch={handleSearch} onClear={handleClear} />
       </View>
 
@@ -157,7 +156,7 @@ const HomeScreen = () => {
         <View>
           {searchResults?.length > 0 &&
             <View>
-              <Text style={{ marginHorizontal: 10, fontWeight: 'bold', fontSize: 12, letterSpacing: 2, color: COLORS.black }}>Searched Food</Text>
+              <Text style={styles.searchedFoodText}>Searched Food</Text>
 
               <FlatList
                 data={searchResults}
@@ -173,7 +172,7 @@ const HomeScreen = () => {
 
           {categories?.length > 0 &&
             <View>
-              <Text style={{ margin: 10, fontWeight: 'bold', fontSize: 12, letterSpacing: 2, color: COLORS.black }}>Find Food</Text>
+              <Text style={styles.findFoodText}>Find Food</Text>
               <FlatList
                 data={categories}
                 horizontal
@@ -197,16 +196,16 @@ const HomeScreen = () => {
             />
           }
         </View>
-        {loading || loadingM ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <LottieView
-                ref={animation}
-                source={require('../../assets/animations/loader.json')}
-                autoPlay
-                loop
-                style={{ width: 100, height: 100 }}
-              />
-            </View> : null }
-        
+        {loading || loadingM ? <View style={styles.loadingView}>
+          <LottieView
+            ref={animation}
+            source={require('../../assets/animations/loader.json')}
+            autoPlay
+            loop
+            style={{ width: 100, height: 100 }}
+          />
+        </View> : null}
+
       </ScrollView>
 
     </View>
@@ -253,6 +252,34 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.black
   },
+  addToCartButton: {
+    backgroundColor: COLORS.primary, 
+    paddingHorizontal: 15, 
+    paddingVertical: 2, 
+    borderTopLeftRadius: 20, 
+    borderBottomRightRadius: 20 
+  },
+  addToCartText: {
+    fontSize: 20, color: COLORS.white
+  },
+  priceText: {
+    marginLeft: 30, fontWeight: '700', color: COLORS.text 
+  },
+  titleLabelNormal: {
+    fontSize: 25, color: COLORS.text_lite, letterSpacing: 1 
+  },
+  titleLabelBold: {
+    fontWeight: 'bold', color: COLORS.black, letterSpacing: 3
+  },
+  searchedFoodText: {
+    marginHorizontal: 10, fontWeight: 'bold', fontSize: 12, letterSpacing: 2, color: COLORS.black 
+  },
+  findFoodText: {
+    margin: 10, fontWeight: 'bold', fontSize: 12, letterSpacing: 2, color: COLORS.black 
+  },
+  loadingView: {
+    flex: 1, justifyContent: 'center', alignItems: 'center'
+  }
 });
 
 export default HomeScreen;

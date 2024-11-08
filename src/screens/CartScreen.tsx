@@ -17,7 +17,7 @@ const CartScreen = () => {
 
     useEffect(() => {
         animation.current?.play();
-      }, []);
+    }, []);
 
     const handleIncreaseQuantity = (idMeal) => {
         dispatch(increaseQuantity(idMeal));
@@ -58,7 +58,7 @@ const CartScreen = () => {
 
         </View>
     );
-    
+
 
     return (
         <View style={styles.container}>
@@ -93,13 +93,13 @@ const CartScreen = () => {
                 </View>
             ) : (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <LottieView
-                ref={animation}
-                source={require('../../assets/animations/empty_cart.json')}
-                autoPlay
-                loop
-                style={{ width: 200, height: 200 }}
-              />
+                    <LottieView
+                        ref={animation}
+                        source={require('../../assets/animations/empty_cart.json')}
+                        autoPlay
+                        loop
+                        style={{ width: 200, height: 200 }}
+                    />
                 </View>
             )}
 

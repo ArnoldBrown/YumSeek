@@ -16,15 +16,15 @@ const ProfileScreen = () => {
   return (
     <KeyboardAwareScrollView extraScrollHeight={100} enableOnAndroid={true} keyboardShouldPersistTaps="handled" style={styles.container}>
       <View >
-      <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+        <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
         <View >
-        <ImageBackground
-        source={require('../../assets/profile_bg.jpg')}
-        style={styles.backgroundImage}
-        imageStyle={{ borderBottomLeftRadius: 150, borderBottomRightRadius: 150 }}
-      >
-        <Text style={styles.overlayText}>Yum<Text style={[styles.overlayText,{color:COLORS.primary, backgroundColor:'transparent'}]}>Seek</Text></Text>
-      </ImageBackground>
+          <ImageBackground
+            source={require('../../assets/profile_bg.jpg')}
+            style={styles.backgroundImage}
+            imageStyle={{ borderBottomLeftRadius: 150, borderBottomRightRadius: 150 }}
+          >
+            <Text style={styles.overlayText}>Yum<Text style={[styles.overlayText, { color: COLORS.primary, backgroundColor: 'transparent' }]}>Seek</Text></Text>
+          </ImageBackground>
           {/* <Image
             source={require('../../assets/profile_bg.jpg')}
             style={{ height: screenHeight / 2.2, width: screenWidth, resizeMode: 'cover', borderBottomLeftRadius: 150, borderBottomRightRadius: 150 }} />
@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
-    backgroundColor:'rgba(0, 0, 0, 0.5)',
-    borderRadius:40,
-    paddingHorizontal:20
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 40,
+    paddingHorizontal: 20
   },
 });
 

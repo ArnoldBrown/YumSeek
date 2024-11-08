@@ -31,7 +31,7 @@ const QuantityInputModal = ({ visible, onClose, onAdd }) => {
     >
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
         <View style={{ width: 300, padding: 20, backgroundColor: 'white', borderRadius: 10 }}>
-          <Text style={{color:'black'}}>Enter Quantity:</Text>
+          <Text style={{ color: 'black' }}>Enter Quantity:</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10 }}>
             <TouchableOpacity onPress={decrementQuantity} style={{ padding: 10 }}>
               <Text style={{ fontSize: 20, color: 'black' }}>-</Text>
@@ -46,11 +46,11 @@ const QuantityInputModal = ({ visible, onClose, onAdd }) => {
               <Text style={{ fontSize: 20, color: 'black' }}>+</Text>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection:'row', justifyContent:'space-evenly'}}> 
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
             <Button title="Cancel" onPress={onClose} color="red" />
-            <Button title="Add to Cart" onPress={handleAdd} color={COLORS.primary}/>
+            <Button title="Add to Cart" onPress={handleAdd} color={COLORS.primary} />
           </View>
-         
+
         </View>
       </View>
     </Modal>
